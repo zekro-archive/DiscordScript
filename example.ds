@@ -1,0 +1,4 @@
+# Just an example how you cloud use DiscordScript
+
+TOKEN "this is a test token :^)";
+CREATE CHANNEL "dummer channel" PARENT "dumme channel für dumme leute";
