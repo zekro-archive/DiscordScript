@@ -1,5 +1,5 @@
 <div align="center">
-    <!-- <img src="http://zekro.de/zb2/src/logo_github.png" width="200"/> -->
+    <img src="https://zekro.de/src/ds-logo.png" width="300"/>
     <h1>~ DiscordScript ~</h1>
     <strong>Manage your Discord server with scripts!</strong><br><br>
     <img src="https://forthebadge.com/images/badges/made-with-python.svg" height="30" />&nbsp;
