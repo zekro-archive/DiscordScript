@@ -16,7 +16,7 @@ If you are an owner of a larger Discord guild or a guild with a lot of roles and
 
 # Development state
 
-This projekt is currently in a very early state of development. Actually, there is nothing really working currently, but I want to share the development phase of this project and maybe collect some tips to improve this plan.
+This project is currently in a very early state of development. Actually, there is nothing really working currently, but I want to share the development phase of this project and maybe collect some tips to improve this plan.
 
 ---
 
