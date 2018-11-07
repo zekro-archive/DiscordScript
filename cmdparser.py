@@ -11,7 +11,8 @@ from util import logger
 
 
 class CommandParser:
-    def __init__(self):
+    def __init__(self, api_instance):
+        self.api_instance = api_instance
         self.registered_commands = dict()
         pass
     
@@ -22,7 +23,7 @@ class CommandParser:
         if invoke in self.registered_commands.keys():
             logger.debug('Trying executing command "%s"' % invoke)
             try:
-                self.registered_commands[invoke]().execute(args)
+                self.registered_commands[invoke](self).execute(args)
             except Exception as e:
                 logger.error('Failed executing command "' + invoke + '": ', e)
                 exit(1)

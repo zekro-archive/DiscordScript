@@ -1,32 +1,32 @@
 """
 COMMAND: TOKEN
 Register Discord API token to authenticate
-at the API.
+at the API. Also, the token will be checked
+after registration for validity.
 """
 
 import command
 
 from util import logger
-from api import api_instance, APIRequests
+from api import APIRequests
 
 class Token(command.Command):
     
     @staticmethod
     def get_invoke():
-        return "TOKEN"
+        return 'TOKEN'
 
     @staticmethod
     def get_args():
-        return { 'APITOKEN': True }
+        return { 'TOKEN': True }
     
     @staticmethod
-    def get_help_description(self):
+    def get_help_description():
         return 'Set the Discord API Bot token to authenticate at the API with.'
 
     def execute(self, passed_args: list):
-        global api_instance
-        api_instance = APIRequests(passed_args[0])
-        response = api_instance.get_current_user()
+        self.cmd_parser.api_instance = APIRequests(passed_args[0])
+        response = self.cmd_parser.api_instance.get_current_user()
 
         body = {}
 

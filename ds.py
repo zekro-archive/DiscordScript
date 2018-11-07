@@ -11,9 +11,12 @@ import os.path
 
 import logging
 import cmdparser
+import api
 from util import logger, argparser
-from commands import token
+from commands import token, cmdhelp, select
 
+
+cmd_parser = None
 
 def _prepare_command_stack(command_chain: str):
     chain_split = command_chain.split('\n')
@@ -25,6 +28,8 @@ def _prepare_command_stack(command_chain: str):
 
 
 def main():
+    global cmd_parser
+
     argparser.init()
     logger.debug('Verbose mode enabled\nARGV: ', argparser.argv)
 
@@ -41,10 +46,11 @@ def main():
 
     logger.debug('COMMANDS: ', command_stack)
 
-    cmd_parser = cmdparser.CommandParser()
+    cmd_parser = cmdparser.CommandParser(api.APIRequests(''))
     cmd_parser.register(token.Token)
+    cmd_parser.register(cmdhelp.Help)
+    cmd_parser.register(select.Select)
     cmd_parser.parse_command_stack(command_stack)
-    print(cmd_parser.registered_commands['TOKEN']().get_help())
 
 
 if __name__ == '__main__':
