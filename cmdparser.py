@@ -24,13 +24,14 @@ class CommandParser:
             try:
                 self.registered_commands[invoke]().execute(args)
             except Exception as e:
-                logger.error('Failed executing command "' + invoke + '":', e)
+                logger.error('Failed executing command "' + invoke + '": ', e)
+                exit(1)
         else:
             logger.error('Command "%s" not found' % invoke)
 
 
-    def register(self, invoke: str, cmd_class: command.Command):
-        self.registered_commands[invoke] = cmd_class
+    def register(self, cmd_class: command.Command):
+        self.registered_commands[cmd_class.get_invoke()] = cmd_class
 
     def parse_command_stack(self, command_stack: list):
         for command in command_stack:

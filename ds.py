@@ -42,8 +42,9 @@ def main():
     logger.debug('COMMANDS: ', command_stack)
 
     cmd_parser = cmdparser.CommandParser()
-    cmd_parser.register("TOKEN", token.Token)
+    cmd_parser.register(token.Token)
     cmd_parser.parse_command_stack(command_stack)
+    print(cmd_parser.registered_commands['TOKEN']().get_help())
 
 
 if __name__ == '__main__':

@@ -51,7 +51,7 @@ def fatal(*content):
     print(_prepare_content(Prefixes.FATAL, content))
 
 
-def INFO(*content):
+def info(*content):
     """
     Print default information to console.
     """

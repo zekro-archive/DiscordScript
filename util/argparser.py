@@ -1,3 +1,4 @@
+import sys
 import argparse
 
 
@@ -9,4 +10,8 @@ def init():
     arg_parser.add_argument('commands', metavar='CMD', nargs='*')
     arg_parser.add_argument('--file', '-f', nargs=1, help='Read script from file and execute.')
     arg_parser.add_argument('--verbose', '-v', action='store_const', const=True, default=False, help='Set output mode to verbose.')
+
+    if len(sys.argv) < 2:
+        arg_parser.print_help()
+        exit(1)
     argv = arg_parser.parse_args()
