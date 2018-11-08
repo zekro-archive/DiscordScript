@@ -51,7 +51,32 @@ class APIRequests:
         return self._request('users/@me', 'GET')
 
     def get_users_guilds(self) -> requests.Response:
-        return self._request('users/guilds', 'GET')
+        return self._request('users/@me/guilds', 'GET')
 
-    def get_guild(self, id: str) -> requests.Response:
-        return self._request('guilds/' + id, 'GET')
+    def get_guild(self, identifier: str, by_name: bool = False) -> requests.Response:
+        if by_name:
+            response = self.get_users_guilds()
+            self.check_status_code(response)
+            data = response.json()
+            try:
+                guild = next(g for g in data if g['name'] == identifier)
+            except Exception:
+                raise Exception('No guild found with name "' + identifier + '"')
+            return self.get_guild(guild['id'])
+        return self._request('guilds/' + identifier, 'GET')
+
+    def get_guilds_channels(self, id: str) -> requests.Response:
+        return self._request('guilds/' + id + '/channels', 'GET')
+
+    def get_channel(self, guild_id: str, identifier: str, by_name: bool = False) -> requests.Response:
+        if by_name:
+            response = self.get_guilds_channels(guild_id)
+            self.check_status_code(response)
+            data = response.json()
+            try:
+                chan = next(c for c in data if c['name'] == identifier)
+            except Exception:
+                raise Exception('No guild found with name "' + identifier + '"')
+            return self.get_channel(guild_id, chan['id'])
+        print(identifier)
+        return self._request('channels/' + identifier, 'GET')

@@ -32,37 +32,62 @@ class Select(command.Command):
         if len(passed_args) < 1:
             logger.fatal('MISSING 1. ARGUMENT: GUILD(S)|CHANNEL(S)|ROLE(S)|USER(S)')
             raise Exception('manual interruption')
-        if len(passed_args) < 2:
-            logger.fatal('MISSING 2. ARGUMENT: ID')
-            raise Exception('manual interruption')
+        # if len(passed_args) < 2:
+        #     logger.fatal('MISSING 2. ARGUMENT: ID')
+        #     raise Exception('manual interruption')
+
+        api = self.cmd_parser.api_instance
 
         by_name = False
-        if passed_args[1].upper() == 'BY' and passed_args[2].upper() == 'NAME':
-            if len(passed_args) < 5:
+        if len(passed_args) > 2 and passed_args[1].upper() == 'BY' and passed_args[2].upper() == 'NAME':
+            if len(passed_args) < 4:
                 logger.fatal('MISSING ARGUMENT: [NAME]')
                 raise Exception('manual interruption')
             by_name = True
 
-        if not by_name:
-            arg = passed_args[0].upper()
+        objecttype = passed_args[0].upper()
+        identifier = passed_args[1] if len(passed_args) > 1 else None
 
-            if arg == 'GUILD':
-                if len(passed_args) < 2:
-                    logger.fatal('MISSING ARGUMENT: [ID]')
+        if by_name:
+            identifier = passed_args[3]
+        
+        def __check_args_length(must: int, argname: str, soft: bool = False) -> bool:
+            if len(passed_args) < must:
+                if not soft:
+                    logger.fatal('MISSING ARGUMENT: [%s]' % argname)
                     raise Exception('manual interruption')
-                response = self.cmd_parser.api_instance.get_guild(passed_args[1])
-                APIRequests.check_status_code(response)
-                cache.selected = cache.Selection('GUILD', response.json())
-            elif arg == cache.Selection.TYPE.CHANNEL:
-                pass
+                logger.error('MISSING ARGUMENT: [%s]' % argname)
 
-            elif arg == cache.Selection.TYPE.USER:
-                pass
+        if objecttype == 'GUILD':
+            __check_args_length(2, 'ID')
+            response = api.get_guild(identifier, by_name)
+            APIRequests.check_status_code(response)
+            cache.selected = cache.Selection('GUILD', response.json())
+        
+        elif objecttype == 'GUILDS':
+            response = api.get_users_guilds()
+            api.check_status_code(response)
+            cache.selected = cache.Selection('GUILDS', response.json())
 
-            elif arg == cache.Selection.TYPE.ROLE:
-                pass
-            else:
-                logger.error('UNSUPPORTED TYPE: ', arg)
+        elif objecttype == 'CHANNEL':
+            __check_args_length(2, 'ID')
+            if by_name and (cache.selected == None or not cache.selected.type == 'GUILD'):
+                logger.fatal('GUILD needs to be selected to select a channel by name')
                 raise Exception('manual interruption')
+            guild_id = cache.selected.data['id'] if cache.selected != None else '' 
+            response = api.get_channel(guild_id, identifier, by_name)
+            APIRequests.check_status_code(response)
+            cache.selected = cache.Selection('CHANNEL', response.json())
+            pass
+        
+        elif objecttype == 'USER':
+            pass
+        
+        elif objecttype == 'ROLE':
+            pass
 
-            logger.debug('SELECTED:\n  - TYPE: ', cache.selected.type, '\n  - DATA: ', cache.selected.data)
+        else:
+            logger.error('UNSUPPORTED TYPE: ', objecttype)
+            raise Exception('manual interruption')
+
+        logger.debug('SELECTED:\n  - TYPE: ', cache.selected.type, '\n  - DATA: ', cache.selected.data)
